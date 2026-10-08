@@ -77,7 +77,7 @@ function FormRespondentContent() {
     }
   };
   if (loading) {
-    return <div className="flex h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>;
+    return <div className="flex h-screen items-center justify-center bg-card"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>;
   }
   if (!form || !form.questions || form.questions.length === 0) {
     return <div className="flex h-screen items-center justify-center"><h1 className="text-2xl">Form not found or has no questions</h1></div>;
@@ -86,11 +86,11 @@ function FormRespondentContent() {
     return (
       <div className="flex h-screen items-center justify-center bg-[#F9F9F9] font-sans">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-black text-white">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground text-white">
             <Check size={32} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Thank you!</h1>
-          <p className="mt-2 text-lg text-gray-500">Your response has been recorded.</p>
+          <h1 className="text-3xl font-bold text-foreground">Thank you!</h1>
+          <p className="mt-2 text-lg text-muted-foreground">Your response has been recorded.</p>
         </motion.div>
       </div>
     );
@@ -98,10 +98,10 @@ function FormRespondentContent() {
   const currentQuestion = form.questions[currentIndex];
   const progress = ((currentIndex) / form.questions.length) * 100;
   return (
-    <div className="relative flex h-screen flex-col overflow-hidden bg-white font-sans">
+    <div className="relative flex h-screen flex-col overflow-hidden bg-card font-sans">
       <div className="absolute top-0 left-0 h-1 bg-gray-200 w-full z-50">
         <motion.div 
-          className="h-full bg-black"
+          className="h-full bg-primary text-primary-foreground"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3 }}
@@ -118,24 +118,24 @@ function FormRespondentContent() {
             className="w-full max-w-3xl"
           >
             <div className="flex items-start gap-4">
-              <span className="flex items-center text-xl font-bold text-black mt-1">
+              <span className="flex items-center text-xl font-bold text-foreground mt-1">
                 {currentIndex + 1}
                 <svg className="ml-1 w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
               </span>
               <div className="flex-1">
-                <h2 className="text-2xl md:text-4xl font-semibold text-gray-900 mb-2 leading-tight">
+                <h2 className="text-2xl md:text-4xl font-semibold text-foreground mb-2 leading-tight">
                   {currentQuestion.text}
                   {currentQuestion.is_required && <span className="text-red-500 ml-2">*</span>}
                 </h2>
                 {currentQuestion.description && (
-                  <p className="text-lg text-gray-500 mb-8">{currentQuestion.description}</p>
+                  <p className="text-lg text-muted-foreground mb-8">{currentQuestion.description}</p>
                 )}
                 <div className="mt-8">
                   {currentQuestion.type === "short_text" || currentQuestion.type === "email" || currentQuestion.type === "number" ? (
                     <input
                       ref={inputRef}
                       type={currentQuestion.type === "email" ? "email" : currentQuestion.type === "number" ? "number" : "text"}
-                      className="w-full border-b border-black/30 bg-transparent py-2 text-2xl md:text-3xl text-black placeholder-gray-300 focus:border-black focus:outline-none transition-colors"
+                      className="w-full border-b border-black/30 bg-transparent py-2 text-2xl md:text-3xl text-foreground placeholder-gray-300 focus:border-black focus:outline-none transition-colors"
                       placeholder="Type your answer here..."
                       value={answers[currentQuestion.id] || ""}
                       onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
@@ -144,7 +144,7 @@ function FormRespondentContent() {
                   ) : currentQuestion.type === "long_text" ? (
                     <textarea
                       ref={inputRef}
-                      className="w-full border-b border-black/30 bg-transparent py-2 text-2xl md:text-3xl text-black placeholder-gray-300 focus:border-black focus:outline-none transition-colors resize-none overflow-hidden"
+                      className="w-full border-b border-black/30 bg-transparent py-2 text-2xl md:text-3xl text-foreground placeholder-gray-300 focus:border-black focus:outline-none transition-colors resize-none overflow-hidden"
                       placeholder="Type your answer here..."
                       rows={3}
                       value={answers[currentQuestion.id] || ""}
@@ -167,17 +167,17 @@ function FormRespondentContent() {
                             }}
                             className={`flex items-center w-full max-w-md rounded-md border p-3 text-left transition-all ${
                               isSelected 
-                                ? "border-black bg-black/5" 
-                                : "border-gray-200 bg-gray-50/50 hover:bg-gray-100"
+                                ? "border-black bg-primary text-primary-foreground/5" 
+                                : "border-border bg-background/50 hover:bg-muted"
                             }`}
                           >
                             <span className={`mr-4 flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${
-                              isSelected ? "bg-black text-white" : "border border-gray-300 text-gray-500 bg-white"
+                              isSelected ? "bg-primary text-primary-foreground text-white" : "border border-border text-muted-foreground bg-card"
                             }`}>
                               {letter}
                             </span>
-                            <span className="text-lg text-gray-800">{option}</span>
-                            {isSelected && <Check size={20} className="ml-auto text-black" />}
+                            <span className="text-lg text-foreground">{option}</span>
+                            {isSelected && <Check size={20} className="ml-auto text-foreground" />}
                           </button>
                         );
                       })}
@@ -196,17 +196,17 @@ function FormRespondentContent() {
                             }}
                             className={`flex items-center w-full max-w-md rounded-md border p-3 text-left transition-all ${
                               isSelected 
-                                ? "border-black bg-black/5" 
-                                : "border-gray-200 bg-gray-50/50 hover:bg-gray-100"
+                                ? "border-black bg-primary text-primary-foreground/5" 
+                                : "border-border bg-background/50 hover:bg-muted"
                             }`}
                           >
                             <span className={`mr-4 flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${
-                              isSelected ? "bg-black text-white" : "border border-gray-300 text-gray-500 bg-white"
+                              isSelected ? "bg-primary text-primary-foreground text-white" : "border border-border text-muted-foreground bg-card"
                             }`}>
                               {letter}
                             </span>
-                            <span className="text-lg text-gray-800">{option}</span>
-                            {isSelected && <Check size={20} className="ml-auto text-black" />}
+                            <span className="text-lg text-foreground">{option}</span>
+                            {isSelected && <Check size={20} className="ml-auto text-foreground" />}
                           </button>
                         );
                       })}
@@ -222,8 +222,8 @@ function FormRespondentContent() {
                           }}
                           className={`flex h-14 w-14 items-center justify-center rounded-md border text-xl font-medium transition-all ${
                             answers[currentQuestion.id] === num.toString()
-                              ? "border-black bg-black text-white scale-110"
-                              : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                              ? "border-black bg-primary text-primary-foreground text-white scale-110"
+                              : "border-border bg-background text-gray-600 hover:bg-muted"
                           }`}
                         >
                           {num}
@@ -235,11 +235,11 @@ function FormRespondentContent() {
                 <div className="mt-8 flex items-center gap-4">
                   <button
                     onClick={handleNext}
-                    className="flex items-center justify-center rounded bg-black px-6 py-2.5 text-lg font-bold text-white transition-transform hover:scale-105 active:scale-95"
+                    className="flex items-center justify-center rounded bg-primary text-primary-foreground px-6 py-2.5 text-lg font-bold text-white transition-transform hover:scale-105 active:scale-95"
                   >
                     OK <Check size={20} className="ml-2" />
                   </button>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-muted-foreground">
                     press <strong>Enter ↵</strong>
                   </span>
                 </div>
@@ -252,13 +252,13 @@ function FormRespondentContent() {
         <button 
           onClick={handlePrev} 
           disabled={currentIndex === 0}
-          className={`flex h-10 w-10 items-center justify-center rounded bg-black/10 transition-colors ${currentIndex === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-black/20"}`}
+          className={`flex h-10 w-10 items-center justify-center rounded bg-primary text-primary-foreground/10 transition-colors ${currentIndex === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-primary text-primary-foreground/20"}`}
         >
-          <ChevronUp size={24} className="text-black" />
+          <ChevronUp size={24} className="text-foreground" />
         </button>
         <button 
           onClick={handleNext}
-          className="flex h-10 w-10 items-center justify-center rounded bg-black transition-colors hover:bg-black/80"
+          className="flex h-10 w-10 items-center justify-center rounded bg-primary text-primary-foreground transition-colors hover:bg-primary text-primary-foreground/80"
         >
           <ChevronDown size={24} className="text-white" />
         </button>
@@ -268,7 +268,7 @@ function FormRespondentContent() {
 }
 export default function FormRespondent() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-card"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>}>
       <FormRespondentContent />
     </Suspense>
   );

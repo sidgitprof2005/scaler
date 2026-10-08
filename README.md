@@ -21,7 +21,8 @@
    - Windows: `.\venv\Scripts\activate`
    - Mac/Linux: `source venv/bin/activate`
 4. Install dependencies: `pip install -r requirements.txt`
-5. Run the server: `uvicorn main:app --reload --port 8000`
+5. Seed database: `python Seed.py`
+6. Run the server: `uvicorn main:app --reload --port 8000`
 
 ### Frontend
 1. Navigate to the `frontend` directory.
@@ -43,7 +44,7 @@ The backend uses a standard FastAPI layered architecture with SQLAlchemy for ORM
 ## Assumptions / Mocked Data / Notes
 *   **Authentication & Users:** The application operates without user authentication or authorization. It assumes a single-tenant environment where anyone can create, edit, or delete forms as the "Creator", and respondents can submit forms anonymously.
 *   **Database:** A local SQLite database is used for simplicity, ensuring the backend can be started immediately without external database dependencies (like PostgreSQL/MySQL).
-*   **Mocked Data (Seeding):** A `POST /seed/` API endpoint is provided in the backend. Hitting this endpoint populates the database with a mock "Customer Feedback Survey" (containing a short text, rating, and long text question) along with sample responses, making it easy to test the dashboard immediately.
+*   **Mocked Data (Seeding):** A `POST /seed/` API endpoint is provided in the backend. Hitting this endpoint populates the database with multiple forms, including a "Customer Feedback Survey" and a "Tech Conference Registration", featuring mixed question types (short text, rating, email, multiple choice, yes/no, number) along with sample responses. This makes it easy to test the forms and dashboard immediately.
 *   **Environment Variables & CORS:** The backend dynamically allows CORS origins via the `FRONTEND_URL` environment variable. The Next.js frontend uses `NEXT_PUBLIC_API_URL` to connect to the backend.
 *   **State Management:** React's built-in state (e.g., `useState`, `useEffect`) was assumed to be sufficient for managing the Drag-and-Drop builder and conversational flow, avoiding the overhead of Redux.
 *   **Validation:** Basic required-field validation is implemented. Advanced validations (like strictly enforcing email formats or min/max bounds) are kept minimal for the MVP scope.

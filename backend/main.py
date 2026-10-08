@@ -8,7 +8,8 @@ import models, schemas, database
 models.Base.metadata.create_all(bind=database.engine)
 app = FastAPI()
 frontend_url = os.getenv("FRONTEND_URL", "*")
-origins = [url.strip() for url in frontend_url.split(",")] if frontend_url != "*" else ["*"]
+origins = [url.strip().rstrip("/") for url in frontend_url.split(",")] if frontend_url != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -113,6 +114,7 @@ def seed_db(db: Session = Depends(get_db)):
     db.add(form1)
     db.commit()
     db.refresh(form1)
+    
     q1 = models.Question(id=str(uuid.uuid4()), form_id=form1.id, type="short_text", text="What is your name?", order=1, is_required=True)
     q2 = models.Question(id=str(uuid.uuid4()), form_id=form1.id, type="rating", text="How would you rate our service?", order=2, is_required=True)
     q3 = models.Question(id=str(uuid.uuid4()), form_id=form1.id, type="long_text", text="Any additional comments?", order=3)
@@ -122,9 +124,60 @@ def seed_db(db: Session = Depends(get_db)):
     db.add(r1)
     db.commit()
     db.refresh(r1)
-    a1 = models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q1.id, value="John Doe")
-    a2 = models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q2.id, value="5")
-    a3 = models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q3.id, value="Great service!")
-    db.add_all([a1, a2, a3])
+    db.add_all([
+        models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q1.id, value="John Doe"),
+        models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q2.id, value="5"),
+        models.Answer(id=str(uuid.uuid4()), response_id=r1.id, question_id=q3.id, value="Great service!")
+    ])
+    
+    # Form 1 - Response 2
+    r2 = models.Response(id=str(uuid.uuid4()), form_id=form1.id)
+    db.add(r2)
     db.commit()
+    db.refresh(r2)
+    db.add_all([
+        models.Answer(id=str(uuid.uuid4()), response_id=r2.id, question_id=q1.id, value="Jane Smith"),
+        models.Answer(id=str(uuid.uuid4()), response_id=r2.id, question_id=q2.id, value="4"),
+        models.Answer(id=str(uuid.uuid4()), response_id=r2.id, question_id=q3.id, value="Very good, but could be faster.")
+    ])
+    db.commit()
+
+    # Form 2: Tech Conference 2026 Registration
+    form2 = models.Form(id=str(uuid.uuid4()), title="Tech Conference Registration", is_published=True)
+    db.add(form2)
+    db.commit()
+    db.refresh(form2)
+    
+    f2_q1 = models.Question(id=str(uuid.uuid4()), form_id=form2.id, type="email", text="What is your email address?", order=1, is_required=True)
+    f2_q2 = models.Question(id=str(uuid.uuid4()), form_id=form2.id, type="multiple_choice", text="Which track are you most interested in?", order=2, options='["Frontend", "Backend", "AI/ML", "Design"]', is_required=True)
+    f2_q3 = models.Question(id=str(uuid.uuid4()), form_id=form2.id, type="yes_no", text="Will you be attending the after-party?", order=3, is_required=True)
+    f2_q4 = models.Question(id=str(uuid.uuid4()), form_id=form2.id, type="number", text="How many years of experience do you have?", order=4)
+    db.add_all([f2_q1, f2_q2, f2_q3, f2_q4])
+    db.commit()
+    
+    # Form 2 - Response 1
+    f2_r1 = models.Response(id=str(uuid.uuid4()), form_id=form2.id)
+    db.add(f2_r1)
+    db.commit()
+    db.refresh(f2_r1)
+    db.add_all([
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r1.id, question_id=f2_q1.id, value="alice@example.com"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r1.id, question_id=f2_q2.id, value="AI/ML"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r1.id, question_id=f2_q3.id, value="Yes"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r1.id, question_id=f2_q4.id, value="5")
+    ])
+
+    # Form 2 - Response 2
+    f2_r2 = models.Response(id=str(uuid.uuid4()), form_id=form2.id)
+    db.add(f2_r2)
+    db.commit()
+    db.refresh(f2_r2)
+    db.add_all([
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r2.id, question_id=f2_q1.id, value="bob@example.com"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r2.id, question_id=f2_q2.id, value="Frontend"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r2.id, question_id=f2_q3.id, value="No"),
+        models.Answer(id=str(uuid.uuid4()), response_id=f2_r2.id, question_id=f2_q4.id, value="2")
+    ])
+    db.commit()
+
     return {"message": "Database seeded successfully"}

@@ -16,6 +16,8 @@ const QUESTION_TYPES = [
   { id: "number", label: "Number", icon: "123" },
   { id: "yes_no", label: "Yes / No", icon: "Y/N" },
   { id: "rating", label: "Rating", icon: "★" },
+  { id: "payment", label: "Payment", icon: "$", disabled: true },
+  { id: "file_upload", label: "File Upload", icon: "📎", disabled: true },
 ];
 import { Suspense } from "react";
 function BuilderContent() {
@@ -124,7 +126,7 @@ function BuilderContent() {
   };
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
@@ -132,30 +134,33 @@ function BuilderContent() {
   if (!form) return <div>Form not found</div>;
   const activeQuestion = questions.find((q) => q.id === activeQuestionId);
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b bg-white px-4 shadow-sm z-10">
+    <div className="flex h-screen flex-col bg-background">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4 shadow-sm z-10">
         <div className="flex items-center gap-4">
-          <Link href="/" className="rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
+          <Link href="/" className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground">
             <ArrowLeft size={18} />
           </Link>
           <input
             type="text"
             value={form.title}
             onChange={(e) => handleUpdateForm({ title: e.target.value })}
-            className="rounded border-transparent bg-transparent px-2 py-1 text-lg font-medium text-gray-900 focus:border-gray-300 focus:bg-white focus:outline-none focus:ring-0 hover:bg-gray-100"
+            className="rounded border-transparent bg-transparent px-2 py-1 text-lg font-medium text-foreground focus:border-border focus:bg-card focus:outline-none focus:ring-0 hover:bg-muted"
           />
         </div>
         <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground border border-dashed border-border cursor-not-allowed" title="Integrations / Webhooks (Coming Soon)">
+            Integrations (Soon)
+          </button>
           <Link
             href={`/forms/${form.id}`}
             target="_blank"
-            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted"
           >
             <Eye size={16} /> Preview
           </Link>
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted"
             title="Copy shareable link"
           >
             {copied ? <CheckCircle2 size={16} className="text-green-600" /> : <Share2 size={16} />} 
@@ -164,7 +169,7 @@ function BuilderContent() {
           <button
             onClick={() => handleUpdateForm({ is_published: !form.is_published })}
             className={`flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium text-white transition-colors ${
-              form.is_published ? "bg-green-600 hover:bg-green-700" : "bg-black hover:bg-gray-800"
+              form.is_published ? "bg-green-600 hover:bg-green-700" : "bg-primary text-primary-foreground hover:bg-gray-800"
             }`}
           >
             {form.is_published ? "Published" : "Publish"}
@@ -172,35 +177,41 @@ function BuilderContent() {
         </div>
       </header>
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-64 flex-shrink-0 border-r bg-white flex flex-col">
+        <div className="w-64 flex-shrink-0 border-r bg-card flex flex-col">
           <div className="p-4 border-b">
-            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Add Question</h2>
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Add Question</h2>
           </div>
           <div className="flex-1 overflow-y-auto p-2">
             <div className="grid grid-cols-2 gap-2">
               {QUESTION_TYPES.map((qt) => (
                 <button
                   key={qt.id}
-                  onClick={() => handleAddQuestion(qt.id)}
-                  className="flex flex-col items-center justify-center gap-2 rounded-lg border border-gray-100 bg-gray-50 p-4 text-gray-600 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 transition-all"
+                  onClick={() => !qt.disabled && handleAddQuestion(qt.id)}
+                  disabled={qt.disabled}
+                  className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-gray-100 bg-background p-4 transition-all ${
+                    qt.disabled 
+                      ? "opacity-50 cursor-not-allowed bg-muted text-gray-400" 
+                      : "text-gray-600 hover:border-border hover:bg-muted hover:text-foreground"
+                  }`}
                 >
                   <span className="text-xl font-bold">{qt.icon}</span>
-                  <span className="text-xs font-medium text-center">{qt.label}</span>
+                  <span className="text-xs font-medium text-center leading-tight">{qt.label}</span>
+                  {qt.disabled && <span className="text-[9px] font-bold uppercase text-primary tracking-wider">Soon</span>}
                 </button>
               ))}
             </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden relative">
+        <div className="flex-1 flex flex-col bg-background overflow-hidden relative">
           <div className="absolute inset-0 overflow-y-auto p-8">
             <div className="max-w-3xl mx-auto space-y-4 pb-32">
               {questions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 py-20 text-center">
-                  <div className="mb-4 rounded-full bg-white p-4 shadow-sm">
-                    <Plus size={32} className="text-gray-400" />
+                <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border py-20 text-center">
+                  <div className="mb-4 rounded-full bg-card p-4 shadow-sm">
+                    <Plus size={32} className="text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900">Your form is empty</h3>
-                  <p className="mt-1 text-sm text-gray-500">Add your first question from the left sidebar.</p>
+                  <h3 className="text-lg font-medium text-foreground">Your form is empty</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Add your first question from the left sidebar.</p>
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -213,17 +224,17 @@ function BuilderContent() {
                             onClick={() => setActiveQuestionId(q.id)}
                           >
                             <div className="flex items-center gap-3 overflow-hidden">
-                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-600">
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-gray-600">
                                 {index + 1}
                               </span>
-                              <div className="truncate font-medium text-gray-900">
+                              <div className="truncate font-medium text-foreground">
                                 {q.text || "Untitled Question"}
                               </div>
                               {q.is_required && <span className="text-red-500 text-sm">*</span>}
                             </div>
                             <button
                               onClick={(e) => { e.stopPropagation(); handleDeleteQuestion(q.id); }}
-                              className="shrink-0 rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="shrink-0 rounded p-1.5 text-muted-foreground hover:bg-red-50 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -237,36 +248,36 @@ function BuilderContent() {
             </div>
           </div>
         </div>
-        <div className="w-80 flex-shrink-0 border-l bg-white flex flex-col">
+        <div className="w-80 flex-shrink-0 border-l bg-card flex flex-col">
           <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Question Settings</h2>
-            <Settings size={16} className="text-gray-400" />
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Question Settings</h2>
+            <Settings size={16} className="text-muted-foreground" />
           </div>
           <div className="flex-1 overflow-y-auto p-6">
             {activeQuestion ? (
               <div className="space-y-6">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Question Text</label>
+                  <label className="mb-2 block text-sm font-medium text-muted-foreground">Question Text</label>
                   <input
                     type="text"
                     value={activeQuestion.text}
                     onChange={(e) => handleUpdateQuestion(activeQuestion.id, { text: e.target.value })}
-                    className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    className="w-full rounded-md border border-border p-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Enter question text"
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Description (Optional)</label>
+                  <label className="mb-2 block text-sm font-medium text-muted-foreground">Description (Optional)</label>
                   <textarea
                     value={activeQuestion.description || ""}
                     onChange={(e) => handleUpdateQuestion(activeQuestion.id, { description: e.target.value })}
-                    className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
+                    className="w-full rounded-md border border-border p-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Add a description"
                     rows={3}
                   />
                 </div>
                 <div className="flex items-center justify-between border-t border-b py-4 border-gray-100">
-                  <label className="text-sm font-medium text-gray-700">Required</label>
+                  <label className="text-sm font-medium text-muted-foreground">Required</label>
                   <label className="relative inline-flex cursor-pointer items-center">
                     <input 
                       type="checkbox" 
@@ -274,12 +285,12 @@ function BuilderContent() {
                       checked={activeQuestion.is_required}
                       onChange={(e) => handleUpdateQuestion(activeQuestion.id, { is_required: e.target.checked })}
                     />
-                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-black peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/20"></div>
+                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-card after:transition-all after:content-[''] peer-checked:bg-primary text-primary-foreground peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/20"></div>
                   </label>
                 </div>
                 {(activeQuestion.type === "multiple_choice" || activeQuestion.type === "dropdown") && (
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Options</label>
+                    <label className="mb-2 block text-sm font-medium text-muted-foreground">Options</label>
                     <div className="space-y-2">
                       {(JSON.parse(activeQuestion.options || "[]")).map((opt: string, idx: number) => (
                         <div key={idx} className="flex gap-2">
@@ -291,7 +302,7 @@ function BuilderContent() {
                               opts[idx] = e.target.value;
                               handleUpdateQuestion(activeQuestion.id, { options: JSON.stringify(opts) });
                             }}
-                            className="flex-1 rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                            className="flex-1 rounded-md border border-border p-2 text-sm focus:border-black focus:outline-none"
                           />
                           <button
                             onClick={() => {
@@ -299,7 +310,7 @@ function BuilderContent() {
                               opts.splice(idx, 1);
                               handleUpdateQuestion(activeQuestion.id, { options: JSON.stringify(opts) });
                             }}
-                            className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-500"
+                            className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-red-500"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -311,16 +322,25 @@ function BuilderContent() {
                           opts.push(`Option ${opts.length + 1}`);
                           handleUpdateQuestion(activeQuestion.id, { options: JSON.stringify(opts) });
                         }}
-                        className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 p-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                        className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border p-2 text-sm font-medium text-gray-600 hover:bg-background"
                       >
                         <Plus size={16} /> Add Option
                       </button>
                     </div>
                   </div>
                 )}
+                
+                {/* Advanced Logic Jumps Placeholder */}
+                <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/50 p-4 text-center">
+                  <div className="mb-1 font-medium text-foreground text-sm flex items-center justify-center gap-1">
+                    <span className="text-[10px] font-bold uppercase bg-primary text-primary-foreground px-1.5 py-0.5 rounded">Soon</span>
+                    Logic Jumps
+                  </div>
+                  <p className="text-xs text-muted-foreground">Advanced branching and conditional logic.</p>
+                </div>
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center text-center text-sm text-gray-400">
+              <div className="flex h-full items-center justify-center text-center text-sm text-muted-foreground">
                 Select a question to view settings
               </div>
             )}

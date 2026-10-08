@@ -47,29 +47,29 @@ export default function Home() {
   };
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">My Workspace</h1>
-          <button
+          <h1 className="text-3xl font-bold text-foreground">My Workspace</h1>
+            <button
             onClick={handleCreateForm}
-            className="flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-105 active:scale-95"
           >
             <Plus size={16} />
             Create new form
           </button>
-        </div>
+          </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {forms.map((form) => (
             <div
               key={form.id}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md"
             >
               <div>
                 <div className="mb-2 flex items-center justify-between">
@@ -83,10 +83,10 @@ export default function Home() {
                     {form.is_published ? "Published" : "Draft"}
                   </span>
                 </div>
-                <h3 className="mb-1 truncate text-lg font-semibold text-gray-900">
+                <h3 className="mb-1 truncate text-lg font-semibold text-foreground">
                   {form.title}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Created {format(new Date(form.created_at), "MMM d, yyyy")}
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function Home() {
                 <div className="flex space-x-2">
                   <Link
                     href={`/builder/${form.id}`}
-                    className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+                    className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                     title="Edit Builder"
                   >
                     <Edit2 size={18} />
@@ -104,14 +104,14 @@ export default function Home() {
                       <Link
                         href={`/forms/${form.id}`}
                         target="_blank"
-                        className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+                        className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                         title="View Form"
                       >
                         <Eye size={18} />
                       </Link>
                       <button
                         onClick={() => handleCopyLink(form.id)}
-                        className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-green-600 transition-colors"
+                        className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-green-600 transition-colors"
                         title="Copy shareable link"
                       >
                         {copiedId === form.id ? <CheckCircle2 size={18} className="text-green-600" /> : <Share2 size={18} />}
@@ -120,7 +120,7 @@ export default function Home() {
                   )}
                   <Link
                     href={`/results/${form.id}`}
-                    className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+                    className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                     title="View Results"
                   >
                     <BarChart2 size={18} />
@@ -128,7 +128,7 @@ export default function Home() {
                 </div>
                 <button
                   onClick={() => handleDelete(form.id)}
-                  className="rounded p-2 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                  className="rounded p-2 text-muted-foreground hover:bg-red-50 hover:text-red-600"
                   title="Delete"
                 >
                   <Trash2 size={18} />
@@ -137,12 +137,12 @@ export default function Home() {
             </div>
           ))}
           {forms.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-transparent py-16">
-              <div className="mb-4 rounded-full bg-gray-100 p-3 text-gray-400">
+            <div className="col-span-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-transparent py-16">
+              <div className="mb-4 rounded-full bg-muted p-3 text-muted-foreground">
                 <Plus size={32} />
               </div>
-              <h3 className="text-lg font-medium text-gray-900">No forms yet</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="text-lg font-medium text-foreground">No forms yet</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 Get started by creating a new form.
               </p>
             </div>

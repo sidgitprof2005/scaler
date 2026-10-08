@@ -23,13 +23,13 @@ export function SortableItem({ id, children, isActive }: { id: string, children:
       ref={setNodeRef}
       style={style}
       className={`group relative flex rounded-lg border ${
-        isActive ? "border-primary bg-primary/5 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"
+        isActive ? "border-primary bg-primary/5 shadow-sm" : "border-border bg-card hover:border-border"
       } ${isDragging ? "opacity-50 shadow-lg border-primary" : ""}`}
     >
       <div
         {...attributes}
         {...listeners}
-        className="flex cursor-grab items-center px-2 text-gray-400 hover:text-gray-600 active:cursor-grabbing"
+        className="flex cursor-grab items-center px-2 text-muted-foreground hover:text-gray-600 active:cursor-grabbing"
       >
         <GripVertical size={20} />
       </div>

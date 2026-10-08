@@ -48,38 +48,38 @@ function ResultsContent() {
   };
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
   if (!form) return <div>Form not found</div>;
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b bg-white px-6">
+    <div className="flex h-screen flex-col bg-background">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b bg-card px-6">
         <div className="flex items-center gap-4">
-          <Link href="/" className="rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
+          <Link href="/" className="rounded p-2 text-muted-foreground hover:bg-muted hover:text-foreground">
             <ArrowLeft size={20} />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">{form.title} - Results</h1>
+          <h1 className="text-xl font-semibold text-foreground">{form.title} - Results</h1>
         </div>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span>{responses.length} {responses.length === 1 ? "Response" : "Responses"}</span>
           <button 
             onClick={handleExportCSV}
             disabled={responses.length === 0}
-            className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-1.5 font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 rounded-md border border-border px-3 py-1.5 font-medium text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Download size={16} /> Export CSV
           </button>
         </div>
       </header>
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-80 border-r bg-white flex flex-col">
-          <div className="p-4 border-b font-medium text-gray-700">Submissions</div>
+        <div className="w-80 border-r bg-card flex flex-col">
+          <div className="p-4 border-b font-medium text-muted-foreground">Submissions</div>
           <div className="flex-1 overflow-y-auto">
             {responses.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 flex flex-col items-center">
+              <div className="p-8 text-center text-muted-foreground flex flex-col items-center">
                 <Inbox size={32} className="mb-2 opacity-20" />
                 No responses yet
               </div>
@@ -89,11 +89,11 @@ function ResultsContent() {
                   key={resp.id}
                   onClick={() => setSelectedResponse(resp)}
                   className={`w-full text-left p-4 border-b transition-colors ${
-                    selectedResponse?.id === resp.id ? "bg-primary/10 border-l-4 border-l-primary" : "hover:bg-gray-50 border-l-4 border-l-transparent"
+                    selectedResponse?.id === resp.id ? "bg-primary/10 border-l-4 border-l-primary" : "hover:bg-background border-l-4 border-l-transparent"
                   }`}
                 >
-                  <div className="font-medium text-gray-900">Response #{responses.length - idx}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="font-medium text-foreground">Response #{responses.length - idx}</div>
+                  <div className="text-xs text-muted-foreground mt-1">
                     {format(new Date(resp.submitted_at), "MMM d, yyyy h:mm a")}
                   </div>
                 </button>
@@ -103,19 +103,19 @@ function ResultsContent() {
         </div>
         <div className="flex-1 overflow-y-auto p-8">
           {selectedResponse ? (
-            <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border p-8">
+            <div className="max-w-3xl mx-auto bg-card rounded-xl shadow-sm border p-8">
               <div className="mb-8 border-b pb-4">
-                <h2 className="text-2xl font-bold text-gray-900">Response Details</h2>
-                <p className="text-gray-500 text-sm mt-1">Submitted on {format(new Date(selectedResponse.submitted_at), "PPP 'at' p")}</p>
+                <h2 className="text-2xl font-bold text-foreground">Response Details</h2>
+                <p className="text-muted-foreground text-sm mt-1">Submitted on {format(new Date(selectedResponse.submitted_at), "PPP 'at' p")}</p>
               </div>
               <div className="space-y-8">
                 {form.questions?.map((q) => {
                   const answer = selectedResponse.answers.find(a => a.question_id === q.id);
                   return (
                     <div key={q.id}>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-2">{q.text}</h3>
-                      <div className="text-gray-700 bg-gray-50 p-4 rounded-md border text-lg">
-                        {answer?.value || <span className="text-gray-400 italic">No answer provided</span>}
+                      <h3 className="text-sm font-semibold text-foreground mb-2">{q.text}</h3>
+                      <div className="text-muted-foreground bg-background p-4 rounded-md border text-lg">
+                        {answer?.value || <span className="text-muted-foreground italic">No answer provided</span>}
                       </div>
                     </div>
                   );
@@ -123,7 +123,7 @@ function ResultsContent() {
               </div>
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-gray-500">
+            <div className="h-full flex items-center justify-center text-muted-foreground">
               {responses.length > 0 ? "Select a response to view details" : "Waiting for responses..."}
             </div>
           )}
@@ -134,7 +134,7 @@ function ResultsContent() {
 }
 export default function Results() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-gray-50"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div></div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-background"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div></div>}>
       <ResultsContent />
     </Suspense>
   );
