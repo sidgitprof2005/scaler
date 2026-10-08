@@ -1,12 +1,10 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
 import { getForm, submitResponse, Form, Answer } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Suspense } from "react";
-
 function FormRespondentContent() {
   const params = useParams();
   const formId = params.formId as string;
@@ -16,17 +14,14 @@ function FormRespondentContent() {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const inputRef = useRef<any>(null);
-
   useEffect(() => {
     loadForm();
   }, [formId]);
-
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [currentIndex]);
-
   const loadForm = async () => {
     try {
       const data = await getForm(formId);
@@ -37,7 +32,6 @@ function FormRespondentContent() {
       setLoading(false);
     }
   };
-
   const handleNext = () => {
     if (!form || !form.questions) return;
     const currentQ = form.questions[currentIndex];
@@ -51,17 +45,13 @@ function FormRespondentContent() {
       handleSubmit();
     }
   };
-
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
   };
-
   const handleSubmit = async () => {
     if (!form || !form.questions) return;
-    
-    // validate required
     for (const q of form.questions) {
       if (q.is_required && !answers[q.id]) {
         alert(`Question "${q.text}" is required.`);
@@ -69,7 +59,6 @@ function FormRespondentContent() {
         return;
       }
     }
-
     try {
       const formattedAnswers: Answer[] = Object.keys(answers).map(qId => ({
         question_id: qId,
@@ -81,22 +70,18 @@ function FormRespondentContent() {
       console.error("Failed to submit form", error);
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleNext();
     }
   };
-
   if (loading) {
     return <div className="flex h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>;
   }
-
   if (!form || !form.questions || form.questions.length === 0) {
     return <div className="flex h-screen items-center justify-center"><h1 className="text-2xl">Form not found or has no questions</h1></div>;
   }
-
   if (submitted) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#F9F9F9] font-sans">
@@ -110,13 +95,10 @@ function FormRespondentContent() {
       </div>
     );
   }
-
   const currentQuestion = form.questions[currentIndex];
   const progress = ((currentIndex) / form.questions.length) * 100;
-
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-white font-sans">
-      {/* Progress bar */}
       <div className="absolute top-0 left-0 h-1 bg-gray-200 w-full z-50">
         <motion.div 
           className="h-full bg-black"
@@ -125,7 +107,6 @@ function FormRespondentContent() {
           transition={{ duration: 0.3 }}
         />
       </div>
-
       <div className="flex flex-1 items-center justify-center px-4 md:px-20">
         <AnimatePresence mode="wait">
           <motion.div
@@ -149,7 +130,6 @@ function FormRespondentContent() {
                 {currentQuestion.description && (
                   <p className="text-lg text-gray-500 mb-8">{currentQuestion.description}</p>
                 )}
-
                 <div className="mt-8">
                   {currentQuestion.type === "short_text" || currentQuestion.type === "email" || currentQuestion.type === "number" ? (
                     <input
@@ -252,7 +232,6 @@ function FormRespondentContent() {
                     </div>
                   ) : null}
                 </div>
-
                 <div className="mt-8 flex items-center gap-4">
                   <button
                     onClick={handleNext}
@@ -269,8 +248,6 @@ function FormRespondentContent() {
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* Navigation Controls */}
       <div className="fixed bottom-0 right-0 p-4 flex gap-2 z-50">
         <button 
           onClick={handlePrev} 
@@ -289,7 +266,6 @@ function FormRespondentContent() {
     </div>
   );
 }
-
 export default function FormRespondent() {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-black border-t-transparent"></div></div>}>

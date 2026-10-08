@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { getForm, updateForm, createQuestion, updateQuestion, deleteQuestion, Form, Question } from "@/lib/api";
 import Link from "next/link";
@@ -8,7 +7,6 @@ import { useParams } from "next/navigation";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableItem } from "@/components/SortableItem";
-
 const QUESTION_TYPES = [
   { id: "short_text", label: "Short Text", icon: "Aa" },
   { id: "long_text", label: "Long Text", icon: "¶" },
@@ -19,9 +17,7 @@ const QUESTION_TYPES = [
   { id: "yes_no", label: "Yes / No", icon: "Y/N" },
   { id: "rating", label: "Rating", icon: "★" },
 ];
-
 import { Suspense } from "react";
-
 function BuilderContent() {
   const params = useParams();
   const formId = params.formId as string;
@@ -31,25 +27,21 @@ function BuilderContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
-
   const handleCopyLink = () => {
     const url = `${window.location.origin}/forms/${formId}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
   useEffect(() => {
     loadForm();
   }, [formId]);
-
   const loadForm = async () => {
     try {
       const data = await getForm(formId);
@@ -64,7 +56,6 @@ function BuilderContent() {
       setLoading(false);
     }
   };
-
   const handleAddQuestion = async (type: string) => {
     try {
       const payload: Partial<Question> = {
@@ -82,7 +73,6 @@ function BuilderContent() {
       console.error("Failed to add question", error);
     }
   };
-
   const handleUpdateForm = async (updates: Partial<Form>) => {
     if (!form) return;
     setForm({ ...form, ...updates });
@@ -92,7 +82,6 @@ function BuilderContent() {
       console.error("Failed to update form", error);
     }
   };
-
   const handleUpdateQuestion = async (id: string, updates: Partial<Question>) => {
     setQuestions(questions.map((q) => (q.id === id ? { ...q, ...updates } : q)));
     try {
@@ -101,7 +90,6 @@ function BuilderContent() {
       console.error("Failed to update question", error);
     }
   };
-
   const handleDeleteQuestion = async (id: string) => {
     if (!confirm("Delete this question?")) return;
     try {
@@ -115,20 +103,13 @@ function BuilderContent() {
       console.error("Failed to delete question", error);
     }
   };
-
   const handleDragEnd = async (event: any) => {
     const { active, over } = event;
-
     if (active.id !== over.id) {
       const oldIndex = questions.findIndex((q) => q.id === active.id);
       const newIndex = questions.findIndex((q) => q.id === over.id);
-      
       const newQuestions = arrayMove(questions, oldIndex, newIndex);
-      
-      // Update local state immediately for fast UI
       setQuestions(newQuestions);
-      
-      // Update order on backend
       try {
         for (let i = 0; i < newQuestions.length; i++) {
           if (newQuestions[i].order !== i) {
@@ -141,7 +122,6 @@ function BuilderContent() {
       }
     }
   };
-
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-50">
@@ -149,14 +129,10 @@ function BuilderContent() {
       </div>
     );
   }
-
   if (!form) return <div>Form not found</div>;
-
   const activeQuestion = questions.find((q) => q.id === activeQuestionId);
-
   return (
     <div className="flex h-screen flex-col bg-gray-50">
-      {/* Header */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-white px-4 shadow-sm z-10">
         <div className="flex items-center gap-4">
           <Link href="/" className="rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
@@ -195,9 +171,7 @@ function BuilderContent() {
           </button>
         </div>
       </header>
-
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar - Add Questions */}
         <div className="w-64 flex-shrink-0 border-r bg-white flex flex-col">
           <div className="p-4 border-b">
             <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Add Question</h2>
@@ -217,8 +191,6 @@ function BuilderContent() {
             </div>
           </div>
         </div>
-
-        {/* Center - Question List (Builder) */}
         <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden relative">
           <div className="absolute inset-0 overflow-y-auto p-8">
             <div className="max-w-3xl mx-auto space-y-4 pb-32">
@@ -265,8 +237,6 @@ function BuilderContent() {
             </div>
           </div>
         </div>
-
-        {/* Right Sidebar - Question Settings */}
         <div className="w-80 flex-shrink-0 border-l bg-white flex flex-col">
           <div className="p-4 border-b flex justify-between items-center">
             <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Question Settings</h2>
@@ -285,7 +255,6 @@ function BuilderContent() {
                     placeholder="Enter question text"
                   />
                 </div>
-                
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">Description (Optional)</label>
                   <textarea
@@ -296,7 +265,6 @@ function BuilderContent() {
                     rows={3}
                   />
                 </div>
-
                 <div className="flex items-center justify-between border-t border-b py-4 border-gray-100">
                   <label className="text-sm font-medium text-gray-700">Required</label>
                   <label className="relative inline-flex cursor-pointer items-center">
@@ -309,7 +277,6 @@ function BuilderContent() {
                     <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-black peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-black/20"></div>
                   </label>
                 </div>
-
                 {(activeQuestion.type === "multiple_choice" || activeQuestion.type === "dropdown") && (
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">Options</label>
@@ -363,7 +330,6 @@ function BuilderContent() {
     </div>
   );
 }
-
 export default function Builder() {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div></div>}>
