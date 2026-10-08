@@ -1,7 +1,5 @@
 # Typeform Clone
 
-This is a fullstack Typeform clone built for the SDE Fullstack Assignment. It features a drag-and-drop form builder, live previews, and a highly polished one-question-at-a-time respondent flow using Framer Motion.
-
 ## Features
 
 *   **Drag-and-Drop Form Builder:** Create and reorder questions easily.
@@ -49,3 +47,6 @@ The backend uses a standard FastAPI layered architecture with SQLAlchemy for ORM
 ## Assumptions Made
 - Default logged-in creator (no authentication implemented as per requirements).
 - Respondent flow requires no authentication.
+
+
+https://backended-9ktt.onrender.com
